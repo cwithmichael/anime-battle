@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Battle {
+  itemOneId    String
+  itemTwoId    String
+  itemOneVotes Int      @default(0)
+  itemTwoVotes Int      @default(0)
+  createdAt    DateTime
+
+  @@id([itemOneId, itemTwoId])
+}
+
+model CharacterItem {
+  id        String   @id
+  firstName String
+  lastName  String
+  origin    String
+  image     String
+  createdAt DateTime
+}

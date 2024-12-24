@@ -1,0 +1,55 @@
+.resultCard:hover {
+  border: none;
+  background-color: none;
+}
+
+.resultCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  text-align: center;
+  animation: 1s ease-out 0s 1 slideInFromLeft;
+  transition: width 2s, height 2s, background-color 2s, rotate 2s;
+  margin: 1.25rem;
+  @media (max-width: 1024px) {
+    width: 100%;
+    flex-direction: column;
+  }
+}
+
+.resultCardDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin: 1.25rem;
+}
+
+.winner {
+  border: 1px solid green;
+}
+
+.loser {
+  border: 1px solid red;
+}
+
+.winner:hover {
+  border: 1px solid green;
+}
+
+.loser:hover {
+  border: 1px solid red;
+}
+
+@media (prefers-color-scheme: dark) {
+  .resultCard:hover {
+    border: none;
+    background-color: none;
+  }
+  .winner:hover {
+    border: 1px solid green;
+  }
+
+  .loser:hover {
+    border: 1px solid red;
+  }
+}

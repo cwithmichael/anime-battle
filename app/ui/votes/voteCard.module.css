@@ -1,0 +1,40 @@
+.voteCard {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  text-align: center;
+  animation: 1s ease-out 0s 1 slideInFromLeft;
+  transition: width 2s, height 2s, background-color 2s, rotate 2s;
+  padding: 1rem;
+  max-width: 300px;
+}
+
+@media (prefers-color-scheme: light) {
+  .voteCard:hover {
+    background-color: #d18d18;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .voteCard:hover {
+    background-color: rgb(199, 191, 191);
+    border: 1px solid rgb(221, 243, 170);
+    border-radius: 5px;
+    color: black;
+  }
+}
+
+.voteButton {
+  background-color: #434e4a;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  border-radius: 5px;
+  width: 100%;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
+}

@@ -1,3 +1,42 @@
+.title {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 52px;
+  font-style: italic;
+  color: #b84000;
+}
+
+.itemTitle {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 1.25rem;
+  margin-top: 10px;
+}
+
+.itemOrigin {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 1.25rem;
+}
+
+.battleStatus {
+  font-weight: 900;
+}
+
+.itemImage {
+  margin: 0 auto;
+}
+
+.resultVotes {
+  text-align: center;
+}
+
+.vsImage {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  @media (min-width: 1024px) {
+    margin: 20px;
+  }
+}
+
 .page {
   --gray-rgb: 0, 0, 0;
   --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
@@ -68,10 +107,7 @@
   padding: 0 20px;
   border: none;
   border: 1px solid transparent;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    border-color 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -165,4 +201,41 @@ a.secondary {
   .logo {
     filter: invert();
   }
+}
+
+.voteContainer {
+  display: flex;
+  flex-direction: row;
+  @media (max-width: 912px) {
+    align-items: self-start;
+    flex-direction: column;
+  }
+}
+
+.resultContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  @media (max-width: 912px) {
+    align-items: self-start;
+  }
+}
+
+.transition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nextButton {
+  background-color: #434e4a;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  border-radius: 5px;
+  width: 50%;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
 }
