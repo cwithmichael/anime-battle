@@ -2,7 +2,7 @@
 
 import prisma from "../db";
 import { Prisma } from "@prisma/client";
-import { AnimeItem, BattleItem } from "../types";
+import { BattleItem } from "../types";
 
 export async function createBattle(itemOneId: string, itemTwoId: string) {
   try {
