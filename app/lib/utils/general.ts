@@ -1,5 +1,4 @@
 export function calculateVotePercentage(x?: number, y?: number) {
-  console.log({ x, y });
   if (x !== undefined && y !== undefined) {
     return (x / (x + y)) * 100;
   }

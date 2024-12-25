@@ -7,60 +7,76 @@ import {
   getBattleStatus,
 } from "@/app/lib/utils/general";
 import { BattleItem } from "@/app/lib/definitions";
+import { battle } from "@prisma/client";
+import { getVoteCount } from "@/app/lib/data";
+import { useState, useEffect } from "react";
 
 export default function ResultForm(props: {
   items: { item1: BattleItem; item2: BattleItem };
-  voteData: { item_one_votes: number | null; item_two_votes: number | null };
-  setTransition: () => void;
+  setStartNewBattle: () => void;
 }) {
+  const [voteData, setVoteData] = useState<battle | null>();
+
+  useEffect(() => {
+    async function fetchVoteData() {
+      const voteData = await getVoteCount(
+        props.items?.item1?.itemId?.toString(),
+        props.items?.item2.itemId?.toString()
+      );
+      console.log({ voteData });
+      setVoteData(voteData);
+    }
+    if (props.items?.item1 && props.items?.item2) {
+      fetchVoteData();
+    }
+  }, [props.items?.item1, props.items?.item2]);
   if (
-    props.voteData.item_one_votes === null ||
-    props.voteData.item_two_votes === null
-  ) {
-    return null;
-  }
-  return (
-    <>
-      <div className={styles.resultContainer}>
-        <ResultCard
-          battleStatus={getBattleStatus(
-            props.voteData?.item_one_votes,
-            props.voteData?.item_two_votes
-          )}
-          votePercentage={calculateVotePercentage(
-            props.voteData?.item_one_votes,
-            props.voteData?.item_two_votes
-          )}
-          numberOfVotes={props.voteData?.item_one_votes}
-          item={props.items?.item1}
-        />
-        <ResultCard
-          battleStatus={getBattleStatus(
-            props.voteData?.item_two_votes,
-            props.voteData?.item_one_votes
-          )}
-          votePercentage={calculateVotePercentage(
-            props.voteData?.item_two_votes,
-            props.voteData?.item_one_votes
-          )}
-          numberOfVotes={props.voteData?.item_two_votes}
-          item={props.items?.item2}
-        />
-      </div>
-      <div className={styles.transition}>
-        <p className={styles.resultVotes}>
-          {props.voteData?.item_one_votes + props.voteData?.item_two_votes}{" "}
-          Total
-        </p>
-        <button
-          className={styles.nextButton}
-          onClick={() => {
-            props.setTransition();
-          }}
-        >
-          Next
-        </button>
-      </div>
-    </>
-  );
+    voteData &&
+    typeof voteData.item_one_votes === "number" &&
+    voteData &&
+    typeof voteData.item_two_votes === "number"
+  )
+    return (
+      <>
+        <div className={styles.resultContainer}>
+          <ResultCard
+            battleStatus={getBattleStatus(
+              voteData.item_one_votes,
+              voteData.item_two_votes
+            )}
+            votePercentage={calculateVotePercentage(
+              voteData.item_one_votes,
+              voteData.item_two_votes
+            )}
+            numberOfVotes={voteData.item_one_votes}
+            item={props.items?.item1}
+          />
+          <ResultCard
+            battleStatus={getBattleStatus(
+              voteData?.item_two_votes,
+              voteData?.item_one_votes
+            )}
+            votePercentage={calculateVotePercentage(
+              voteData?.item_two_votes,
+              voteData?.item_one_votes
+            )}
+            numberOfVotes={voteData?.item_two_votes}
+            item={props.items?.item2}
+          />
+        </div>
+        <div className={styles.transition}>
+          <p className={styles.resultVotes}>
+            {voteData?.item_one_votes + voteData?.item_two_votes} Total
+          </p>
+          <button
+            className={styles.nextButton}
+            onClick={() => {
+              props.setStartNewBattle();
+            }}
+          >
+            Next
+          </button>
+        </div>
+      </>
+    );
 }

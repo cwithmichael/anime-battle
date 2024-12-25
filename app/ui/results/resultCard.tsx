@@ -39,7 +39,12 @@ export default function resultCard(props: {
           <p className={styles.itemTitle}>
             {item.firstName} {item.lastName}{" "}
           </p>
-          <p>{votePercentage?.toFixed(2)}%</p>
+          <p>
+            {votePercentage !== undefined && isNaN(votePercentage)
+              ? 0
+              : votePercentage?.toFixed(2)}
+            %
+          </p>
           <p>
             {" "}
             {numberOfVotes} Vote
