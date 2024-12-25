@@ -1,7 +1,7 @@
 "use server";
 import prisma from "./db";
 import { Prisma } from "@prisma/client";
-import { BattleItem } from "./types";
+import { BattleItem } from "@/app/lib/definitions";
 import { convertCharacterItemToBattleItem } from "./utils/parser";
 
 export async function vote(itemId: string, itemId2: string, selected: string) {

@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import styles from "./resultCard.module.css";
 import Image from "next/image";
-import { BattleItem } from "@/app/lib/types";
+import { BattleItem } from "@/app/lib/definitions";
 
 export default function resultCard(props: {
   className?: string;
@@ -24,13 +24,15 @@ export default function resultCard(props: {
           className
         )}
       >
-        <Image
-          className={styles.itemImage}
-          alt={""}
-          src={item.image}
-          height={250}
-          width={250}
-        />
+        {item.image && (
+          <Image
+            className={styles.itemImage}
+            alt={""}
+            src={item.image}
+            height={250}
+            width={250}
+          />
+        )}
         <div className={styles.resultCardDetails}>
           <p className={styles.battleStatus}>{battleStatus}</p>
 

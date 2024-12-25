@@ -1,7 +1,7 @@
 "use server";
 
-import { AnimeItem } from "../types";
-import { Battle } from "@prisma/client";
+import { AnimeItem } from "@/app/lib/definitions";
+import { battle } from "@prisma/client";
 import { cookies } from "next/headers";
 import * as gzip from "zlib";
 import { pipeline } from "stream";
@@ -75,10 +75,13 @@ export async function checkCookie(itemOneId: string, itemTwoId: string) {
   const cookieStore = await cookies();
   const battles = cookieStore.get("battles");
   if (battles) {
-    const battleList: Partial<Battle>[] = JSON.parse(battles.value);
+    const battleList: Partial<battle>[] = JSON.parse(battles.value);
     console.log({ battleList });
     for (const battle of battleList) {
-      if (battle.itemOneId === itemOneId && battle.itemTwoId === itemTwoId) {
+      if (
+        battle.item_one_id === itemOneId &&
+        battle.item_two_id === itemTwoId
+      ) {
         return true;
       }
     }
