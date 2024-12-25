@@ -2,7 +2,7 @@
 
 import { AnimeItem, BattleItem } from "@/app/lib/definitions";
 import VoteForm from "./votes/voteForm";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import ResultForm from "./results/resultForm";
 import { createBattle, getItem, saveItem } from "../lib/data";
 import { getRandomIds } from "../lib/utils/general";
@@ -131,7 +131,6 @@ export default function Battle() {
       }
     }
     if (startNewBattle) {
-      console.log("starting new battle");
       fetchItems().catch(console.log);
     }
   }, [startNewBattle]);
@@ -139,7 +138,6 @@ export default function Battle() {
     return <div style={{ textAlign: "center" }}>Loading...</div>;
   }
   if (transition) {
-    console.log("result", { items });
     return (
       items?.item1 &&
       items?.item2 && (
