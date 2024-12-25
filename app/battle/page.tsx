@@ -4,7 +4,7 @@ import { getItem, getVoteCount, saveItem } from "@/app/lib/data";
 import { getRandomIds } from "@/app/lib/utils/general";
 import { AnimeItem } from "@/app/lib/definitions";
 import { convertAnimeItemToBattleItem } from "@/app/lib/utils/parser";
-import Battle from "../ui/votes/battle";
+import Battle from "../ui/battle";
 
 async function fetchAnimeItem(itemId: string) {
   const query = `query CharacterQuery($characterId: Int) {

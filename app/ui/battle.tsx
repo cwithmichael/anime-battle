@@ -1,16 +1,15 @@
 "use client";
 
 import { BattleItem } from "@/app/lib/definitions";
-import VoteForm from "./voteForm";
+import VoteForm from "./votes/voteForm";
 import { useState } from "react";
-import ResultForm from "../results/resultForm";
+import ResultForm from "./results/resultForm";
 
 export default function Battle(props: {
   items: { item1: BattleItem; item2: BattleItem };
   voteData?: { item_one_votes: number | null; item_two_votes: number | null };
 }) {
   const [transition, setTransition] = useState(false);
-  console.log({ transition, voteData: props.voteData, items: props.items });
   return transition ? (
     props.items?.item1 &&
       props.items?.item2 &&
