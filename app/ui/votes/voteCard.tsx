@@ -1,42 +1,41 @@
 "use client";
 
+import { BattleItem } from "@/app/lib/definitions";
 import styles from "./voteCard.module.css";
 import Image from "next/image";
 
 export default function VoteCard(props: {
-  image: string;
-  itemId: string;
-  firstName: string;
-  lastName: string;
-  origin: string;
-  onSubmitHandler(itemId: string): void;
+  item: BattleItem;
+  setTransition: () => void;
 }) {
-  const { image, firstName, lastName, onSubmitHandler, origin } = props;
+  const { item, setTransition } = props;
 
   return (
     <div
       className={styles.voteCard}
       onClick={(e) => {
         e.preventDefault();
-        onSubmitHandler(props.itemId);
+        setTransition();
       }}
     >
-      <Image
-        className={styles.itemImage}
-        alt={""}
-        src={image}
-        height={250}
-        width={250}
-      />
+      {item.image && (
+        <Image
+          className={styles.itemImage}
+          alt={""}
+          src={item.image}
+          height={250}
+          width={250}
+        />
+      )}
       <p className={styles.itemTitle}>
-        {firstName} {lastName}{" "}
+        {item.firstName} {item.lastName}{" "}
       </p>
-      <p className={styles.itemOrigin}>{origin}</p>
+      <p className={styles.itemOrigin}>{item.origin}</p>
       <button
         className={styles.voteButton}
         onClick={(e) => {
           e.preventDefault();
-          onSubmitHandler(props.itemId);
+          setTransition();
         }}
       >
         Vote

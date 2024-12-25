@@ -1,4 +1,4 @@
-import { CharacterItem } from "@prisma/client";
+import { item } from "@prisma/client";
 import { AnimeItem, BattleItem } from "../types";
 
 export function convertAnimeItemToBattleItem(item: AnimeItem) {
@@ -12,12 +12,12 @@ export function convertAnimeItemToBattleItem(item: AnimeItem) {
   };
 }
 
-export function convertCharacterItemToBattleItem(item: CharacterItem) {
+export function convertCharacterItemToBattleItem(item: item) {
   console.log("convert Item", { item });
   return {
     itemId: Number(item.id),
-    firstName: item.firstName,
-    lastName: item.lastName,
+    firstName: item.first_name,
+    lastName: item.last_name,
     origin: item.origin,
     image: item.image,
   } satisfies BattleItem;

@@ -3,25 +3,17 @@
 import clsx from "clsx";
 import styles from "./resultCard.module.css";
 import Image from "next/image";
+import { BattleItem } from "@/app/lib/types";
 
 export default function resultCard(props: {
   className?: string;
-  image: string;
-  firstName: string;
-  lastName: string;
+  item: BattleItem;
   numberOfVotes: number;
   votePercentage?: number;
   battleStatus: string;
 }) {
-  const {
-    battleStatus,
-    className,
-    image,
-    firstName,
-    lastName,
-    numberOfVotes,
-    votePercentage,
-  } = props;
+  const { battleStatus, className, item, numberOfVotes, votePercentage } =
+    props;
   return (
     <div className={styles.resultCard}>
       <div
@@ -35,7 +27,7 @@ export default function resultCard(props: {
         <Image
           className={styles.itemImage}
           alt={""}
-          src={image}
+          src={item.image}
           height={250}
           width={250}
         />
@@ -43,7 +35,7 @@ export default function resultCard(props: {
           <p className={styles.battleStatus}>{battleStatus}</p>
 
           <p className={styles.itemTitle}>
-            {firstName} {lastName}{" "}
+            {item.firstName} {item.lastName}{" "}
           </p>
           <p>{votePercentage?.toFixed(2)}%</p>
           <p>
