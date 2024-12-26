@@ -2,7 +2,6 @@ import { item } from "@prisma/client";
 import { AnimeItem, BattleItem } from "@/app/lib/definitions";
 
 export function convertAnimeItemToBattleItem(item: AnimeItem) {
-  console.log("convert Item", { item });
   return {
     itemId: item.Character.id,
     firstName: item.Character.name.first,
@@ -13,7 +12,6 @@ export function convertAnimeItemToBattleItem(item: AnimeItem) {
 }
 
 export function convertCharacterItemToBattleItem(item: item) {
-  console.log("convert Item", { item });
   return {
     itemId: Number(item.id),
     firstName: item.first_name ?? undefined,

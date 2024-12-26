@@ -52,7 +52,6 @@ async function fetchAnimeItem(itemId: string) {
         return Response.json(result.data satisfies AnimeItem);
       }
       if (data.status === 404) {
-        console.log(`could not get item with id: ${itemId}`);
         return Response.json(null, { status: 404 });
       }
     } catch (e) {
@@ -60,7 +59,6 @@ async function fetchAnimeItem(itemId: string) {
     }
     retryCount -= 1;
   }
-  console.log(`could not get item with id: ${itemId}`);
   return Response.json(null, { status: 404 });
 }
 
@@ -104,7 +102,6 @@ async function createItems() {
     await saveItem(item2);
     return { item1, item2 };
   } else {
-    console.log("failed to fetch data");
     return undefined;
   }
 }
@@ -142,7 +139,7 @@ export default function Battle() {
       }
     }
     if (startNewBattle) {
-      fetchItems().catch(console.log);
+      fetchItems().catch();
     }
   }, [startNewBattle]);
   if (!items) {

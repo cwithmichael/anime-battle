@@ -15,15 +15,12 @@ export default function VoteForm(props: {
 
   useEffect(() => {
     async function vote() {
-      console.log({ selected, items: props.items });
       if (
         selected &&
         props.items &&
         props.items?.item1?.itemId &&
         props.items?.item2.itemId
       ) {
-        console.log("placing vote");
-
         await placeVote(
           props.items.item1.itemId.toString(),
           props.items.item2.itemId.toString(),

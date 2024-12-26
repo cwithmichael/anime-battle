@@ -23,7 +23,6 @@ export default function ResultForm(props: {
         props.items?.item1?.itemId?.toString(),
         props.items?.item2.itemId?.toString()
       );
-      console.log({ voteData });
       setVoteData(voteData);
     }
     if (props.items?.item1 && props.items?.item2) {
