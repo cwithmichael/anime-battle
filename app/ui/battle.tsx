@@ -4,9 +4,10 @@ import { AnimeItem, BattleItem } from "@/app/lib/definitions";
 import VoteForm from "./votes/voteForm";
 import { useEffect, useState } from "react";
 import ResultForm from "./results/resultForm";
-import { createBattle, getItem, saveItem } from "../lib/data";
+import { createBattle, createUser, getItem, saveItem } from "../lib/data";
 import { getRandomIds } from "../lib/utils/general";
 import { convertAnimeItemToBattleItem } from "../lib/utils/parser";
+import { useSession } from "next-auth/react";
 
 async function fetchAnimeItem(itemId: string) {
   const query = `query CharacterQuery($characterId: Int) {
@@ -118,6 +119,16 @@ export default function Battle() {
       }
     | undefined
   >(undefined);
+  const { data: session, status, update } = useSession();
+
+  useEffect(() => {
+    async function createUserInDB(email: string) {
+      await createUser(email);
+    }
+    if (session && status === "authenticated" && session.user?.email) {
+      createUserInDB(session.user?.email);
+    }
+  }, [session, status, update]);
 
   useEffect(() => {
     async function fetchItems() {

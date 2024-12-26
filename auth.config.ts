@@ -1,5 +1,4 @@
 import type { NextAuthConfig } from "next-auth";
-import { createUser } from "./app/lib/data";
 
 export const authConfig = {
   pages: {
@@ -7,9 +6,6 @@ export const authConfig = {
   },
   callbacks: {
     async authorized({ auth, request: { nextUrl } }) {
-      if (auth?.user?.email) {
-        await createUser(auth.user.email);
-      }
       const isLoggedIn = !!auth?.user;
       const isOnBattle = nextUrl.pathname.startsWith("/battle");
       if (isOnBattle) {
@@ -19,6 +15,13 @@ export const authConfig = {
         return Response.redirect(new URL("/battle", nextUrl));
       }
       return true;
+    },
+    async jwt({ token, account, profile }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.id = profile?.id;
+      }
+      return token;
     },
   },
   session: {
