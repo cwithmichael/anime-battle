@@ -64,6 +64,28 @@ export async function createBattle(itemOneId: string, itemTwoId: string) {
   }
 }
 
+export async function createUserBattle(
+  userEmail: string,
+  itemOneId: string,
+  itemTwoId: string
+) {
+  try {
+    await prisma.user_battle.create({
+      data: {
+        item_one_id: itemOneId,
+        item_two_id: itemTwoId,
+        user_email: userEmail,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      return false;
+    }
+    console.error({ e });
+  }
+  return true;
+}
+
 export async function createItem(item: BattleItem) {
   try {
     await prisma.item.create({
@@ -141,7 +163,6 @@ export async function placeVote(
       });
     }
   } catch (e) {
-    console.log(e);
     throw e;
   }
 }

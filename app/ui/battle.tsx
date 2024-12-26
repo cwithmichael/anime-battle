@@ -4,7 +4,13 @@ import { AnimeItem, BattleItem } from "@/app/lib/definitions";
 import VoteForm from "./votes/voteForm";
 import { useEffect, useState } from "react";
 import ResultForm from "./results/resultForm";
-import { createBattle, createUser, getItem, saveItem } from "../lib/data";
+import {
+  createBattle,
+  createUser,
+  createUserBattle,
+  getItem,
+  saveItem,
+} from "../lib/data";
 import { getRandomIds } from "../lib/utils/general";
 import { convertAnimeItemToBattleItem } from "../lib/utils/parser";
 import { useSession } from "next-auth/react";
@@ -30,40 +36,36 @@ async function fetchAnimeItem(itemId: string) {
     }
   }
   `;
-  let retryCount = 5;
-  const dryRun = false;
-  while (itemId && retryCount > 0 && !dryRun) {
-    try {
-      const data = await fetch("https://graphql.anilist.co/", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+  try {
+    const data = await fetch("https://graphql.anilist.co/", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          characterId: itemId,
         },
-        body: JSON.stringify({
-          query,
-          variables: {
-            characterId: itemId,
-          },
-        }),
-      });
-      if (data.status === 200) {
-        const result = await data.json();
-        return Response.json(result.data satisfies AnimeItem);
-      }
-      if (data.status === 404) {
-        return Response.json(null, { status: 404 });
-      }
-    } catch (e) {
-      console.error(e);
+      }),
+    });
+    if (data.status === 200) {
+      const result = await data.json();
+      return Response.json(result.data satisfies AnimeItem);
     }
-    retryCount -= 1;
+    if (data.status === 404) {
+      return Response.json(null, { status: 404 });
+    }
+  } catch (e) {
+    console.error(e);
   }
+
   return Response.json(null, { status: 404 });
 }
 
 async function createItems() {
-  const maxInt = 100;
+  const maxInt = 1000;
   const { x, y } = getRandomIds(maxInt);
   let item1 = await getItem(x);
   if (item1 === null) {
@@ -77,7 +79,7 @@ async function createItems() {
     const fetchedItem: AnimeItem = await data.json();
     if (fetchedItem) item2 = convertAnimeItemToBattleItem(fetchedItem);
   }
-  let retryCount = 10;
+  let retryCount = 5;
   while (retryCount > 0) {
     const { x, y } = getRandomIds(maxInt);
     item1 = await getItem(x);
@@ -132,16 +134,28 @@ export default function Battle() {
       const items = await createItems();
       if (items) {
         setItems(items);
-        await createBattle(
-          items?.item1.itemId.toString(),
-          items.item2.itemId.toString()
-        );
+        let votedAlready = false;
+        if (session && status === "authenticated" && session.user?.email) {
+          votedAlready = await createUserBattle(
+            session.user?.email,
+            items?.item1.itemId.toString(),
+            items.item2.itemId.toString()
+          );
+        }
+        if (!votedAlready) {
+          await createBattle(
+            items?.item1.itemId.toString(),
+            items.item2.itemId.toString()
+          );
+        } else {
+          setStartNewBattle(true);
+        }
       }
     }
     if (startNewBattle) {
       fetchItems().catch();
     }
-  }, [startNewBattle]);
+  }, [session, startNewBattle, status]);
   if (!items) {
     return <div style={{ textAlign: "center" }}>Loading...</div>;
   }

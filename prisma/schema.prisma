@@ -18,6 +18,16 @@ model battle {
   @@id([item_one_id, item_two_id])
 }
 
+model user_battle {
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  item_one_id String
+  item_two_id String
+  user_email  String
+  user        User      @relation(fields: [user_email], references: [email], onDelete: Cascade)
+
+  @@id([item_one_id, item_two_id, user_email])
+}
+
 model item {
   id         Int       @id
   origin     String?   @db.VarChar(255)
@@ -28,12 +38,13 @@ model item {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String    @unique
+  email         String        @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
+  battles       user_battle[]
   sessions      Session[]
 
   createdAt DateTime @default(now())

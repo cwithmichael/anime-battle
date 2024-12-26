@@ -4,7 +4,7 @@ import { BattleItem } from "@/app/lib/definitions";
 import styles from "@/app/page.module.css";
 import VoteCard from "./voteCard";
 import Image from "next/image";
-import { placeVote } from "@/app/lib/data";
+import { createBattle, placeVote } from "@/app/lib/data";
 import { useEffect, useState } from "react";
 
 export default function VoteForm(props: {
@@ -21,6 +21,10 @@ export default function VoteForm(props: {
         props.items?.item1?.itemId &&
         props.items?.item2.itemId
       ) {
+        await createBattle(
+          props.items.item1.itemId.toString(),
+          props.items.item2.itemId.toString()
+        );
         await placeVote(
           props.items.item1.itemId.toString(),
           props.items.item2.itemId.toString(),
