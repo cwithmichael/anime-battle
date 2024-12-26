@@ -1,71 +1,10 @@
 "use server";
 
-import { AnimeItem } from "@/app/lib/definitions";
 import { battle } from "@prisma/client";
 import { cookies } from "next/headers";
 import * as gzip from "zlib";
 import { pipeline } from "stream";
 
-export async function fetchItem(
-  itemId: string,
-  dryRun?: boolean
-): Promise<AnimeItem | undefined> {
-  const query = `query CharacterQuery($characterId: Int) {
-  Character(id: $characterId) {
-    id
-    name {
-      first
-      last
-    }
-    image {
-      medium
-    }
-    media {
-      nodes {
-        title {
-          english
-        }
-      }
-    }
-  }
-}
-`;
-  let retryCount = 5;
-  dryRun = false;
-  while (retryCount > 0 && !dryRun) {
-    try {
-      console.log("hitting endpoint", `ItemID:${itemId}`);
-      const data = await fetch("https://graphql.anilist.co/", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query,
-          variables: {
-            characterId: itemId,
-          },
-        }),
-      });
-      console.log({ data });
-      if (data.status === 200) {
-        const result = await data.json();
-        console.log({ result });
-        return result.data satisfies AnimeItem;
-      }
-      if (data.status === 404) {
-        console.error(`could not get item with id: ${itemId}`);
-        return undefined;
-      }
-    } catch (e) {
-      console.error(e);
-    }
-    retryCount -= 1;
-  }
-  console.error(`could not get item with id: ${itemId}`);
-  return undefined;
-}
 export async function getCookie(name: string) {
   const cookieStore = await cookies();
   return cookieStore.get(name);
