@@ -9,9 +9,10 @@ export default function Page() {
       <div>
         <div className={styles.homePageGreeting}>
           <p>
-            <strong>Welcome to Acme.</strong> This is the example for the{" "}
-            <a href="https://nextjs.org/learn/">Next.js Learn Course</a>,
-            brought to you by Vercel.
+            <strong>Welcome to Anime Battle!</strong>
+            <p>
+              Please login to start voting for your favorite anime characters!
+            </p>
           </p>
           <Link href="/login">
             <span>Log in</span>
