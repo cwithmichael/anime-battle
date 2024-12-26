@@ -2,8 +2,7 @@
 
 import { battle } from "@prisma/client";
 import { cookies } from "next/headers";
-import * as gzip from "zlib";
-import { pipeline } from "stream";
+import zlib from "zlib";
 
 export async function getCookie(name: string) {
   const cookieStore = await cookies();
@@ -30,16 +29,14 @@ export async function checkCookie(itemOneId: string, itemTwoId: string) {
 export async function setCookie(name: string, value: string) {
   const cookieStore = await cookies();
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const zip = gzip.createGzip();
-  pipeline(value, zip, (err) => {
+  zlib.gzip(value, (err, compressed) => {
     if (err) {
       console.error(err);
       return;
     }
-    // const session = await encrypt({ userId, expiresAt })
     cookieStore.set({
       name: name,
-      value: value,
+      value: compressed.toString("base64"),
       httpOnly: true,
       secure: true,
       expires: expiresAt,

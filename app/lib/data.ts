@@ -24,6 +24,24 @@ export async function getVoteCount(itemId: string, itemId2: string) {
   return getVotes(itemId, itemId2);
 }
 
+export async function createUser(email: string) {
+  try {
+    await prisma.user.create({
+      data: {
+        email,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        console.log(
+          "There is a unique constraint violation, user already exists"
+        );
+      }
+    }
+  }
+}
+
 export async function createBattle(itemOneId: string, itemTwoId: string) {
   try {
     await prisma.battle.create({
