@@ -1,10 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 import { createUser } from "./app/lib/data";
-import prisma from "./app/lib/db";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 
 export const authConfig = {
-  adapter: PrismaAdapter(prisma),
   pages: {
     signIn: "/login",
   },
@@ -25,7 +22,7 @@ export const authConfig = {
     },
   },
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   providers: [], // Add providers with an empty array for now
 } satisfies NextAuthConfig;
