@@ -27,28 +27,33 @@
 }
 
 .voteButton {
-  background-color: #434e4a;
-  border: none;
+  background-color: #b84000;
   color: white;
+  cursor: pointer;
   text-align: center;
   text-decoration: none;
   font-size: 16px;
   border-radius: 5px;
+  border-color: #b84000;
+  border-style: none;
   width: 100%;
   margin-top: 1.2rem;
   margin-bottom: 1.2rem;
 }
 
 @media (prefers-color-scheme: light) {
-  .voteButton {
-    background-color: #b84000;
-  }
   .voteCard:hover {
     background-color: #d18d18;
   }
 }
 
 @media (prefers-color-scheme: dark) {
+  .voteButton {
+    color: white;
+  }
+  .voteButton:hover {
+    color: white;
+  }
   .voteCard:hover {
     background-color: rgb(199, 191, 191);
     border: 1px solid rgb(221, 243, 170);

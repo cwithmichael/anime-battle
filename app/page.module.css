@@ -20,6 +20,7 @@
   border-color: #b84000;
   background-color: #b84000;
   margin-top: 2rem;
+  cursor: pointer;
 }
 
 .navBar {
@@ -27,6 +28,7 @@
   justify-content: flex-end;
 }
 .signOutButton {
+  cursor: pointer;
   text-align: center;
   padding: 1rem;
   border-radius: 5px;
@@ -57,6 +59,7 @@
     background-color: #d18d18;
   }
 }
+
 .signOutForm {
   display: flex;
   flex-direction: row;
@@ -294,9 +297,10 @@ a.secondary {
 }
 
 .nextButton {
-  background-color: #434e4a;
+  background-color: #b84000;
   border: none;
   color: white;
+  cursor: pointer;
   text-align: center;
   text-decoration: none;
   font-size: 16px;
@@ -312,8 +316,6 @@ a.secondary {
   }
 }
 
-@media (prefers-color-scheme: light) {
-  .nextButton {
-    background-color: #b84000;
-  }
+.nextButton:hover {
+  color: black;
 }
