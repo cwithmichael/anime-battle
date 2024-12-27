@@ -12,13 +12,7 @@ export default function VoteCard(props: {
 
   if (item) {
     return (
-      <div
-        className={styles.voteCard}
-        onClick={(e) => {
-          e.preventDefault();
-          setSelected(item);
-        }}
-      >
+      <div className={styles.voteCard}>
         {item?.image && (
           <Image
             className={styles.itemImage}
