@@ -34,11 +34,11 @@
   background-color: #b84000;
   margin-right: 10px;
   margin-top: 2px;
-}
-.signOutForm {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+
+  @media (max-width: 912px) {
+    padding: 0.5rem;
+    margin-bottom: 10px;
+  }
 }
 .loginButton:hover {
   color: black;
@@ -46,6 +46,23 @@
 .signOutButton:hover {
   color: black;
 }
+@media (prefers-color-scheme: light) {
+  .loginButton {
+    color: white;
+  }
+  .signOutButton {
+    color: white;
+  }
+  .signOutButton:hover {
+    background-color: #d18d18;
+  }
+}
+.signOutForm {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 .homePageGreeting {
   text-align: center;
   padding: 0;
@@ -287,4 +304,16 @@ a.secondary {
   width: 50%;
   margin-top: 1.2rem;
   margin-bottom: 1.2rem;
+
+  @media (max-width: 912px) {
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .nextButton {
+    background-color: #b84000;
+  }
 }

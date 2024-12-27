@@ -7,6 +7,9 @@ export const authConfig = {
   callbacks: {
     async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
+      if (!isLoggedIn && nextUrl.pathname === "/") {
+        return false;
+      }
       const isOnBattle = nextUrl.pathname.startsWith("/battle");
       if (isOnBattle) {
         if (isLoggedIn) return true;
