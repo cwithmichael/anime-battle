@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { BattleItem } from "@/app/lib/definitions";
@@ -9,7 +8,6 @@ import { checkUserBattle, createItems, createUser } from "../lib/data";
 import { useSession } from "next-auth/react";
 
 export default function Battle() {
-  const [startNewBattle, setStartNewBattle] = useState(false);
   const [voted, setVoted] = useState(false);
   const [transition, setTransition] = useState(false);
   const [items, setItems] = useState<
@@ -104,7 +102,6 @@ export default function Battle() {
       items={items}
       key={JSON.stringify(items)}
       setTransition={() => {
-        setStartNewBattle(false);
         setTransition(true);
       }}
       session={session}

@@ -4,6 +4,9 @@
   font-style: italic;
   color: #b84000;
   text-align: center;
+  @media (max-width: 912px) {
+    font-size: 42px;
+  }
 }
 
 .login {
@@ -56,6 +59,33 @@
   @media (min-width: 1024px) {
     margin: 20px;
   }
+  @media (max-width: 667px) {
+    width: 60px;
+    height: 60px;
+    align-self: center;
+    margin-top: 11rem;
+  }
+}
+
+.voteContainer {
+  display: flex;
+  flex-direction: row;
+  margin-top: 1.25rem;
+  @media (max-width: 665px) {
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 0;
+  }
+}
+
+.resultContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  @media (max-width: 912px) {
+    align-items: center;
+    flex-direction: column;
+  }
 }
 
 .page {
@@ -65,9 +95,6 @@
 
   --button-primary-hover: #383838;
   --button-secondary-hover: #f2f2f2;
-
-  display: grid;
-  grid-template-rows: 20px 1fr 20px;
   align-items: center;
   justify-items: center;
   min-height: 100svh;
@@ -219,24 +246,6 @@ a.secondary {
 @media (prefers-color-scheme: dark) {
   .logo {
     filter: invert();
-  }
-}
-
-.voteContainer {
-  display: flex;
-  flex-direction: row;
-  @media (max-width: 912px) {
-    align-items: self-start;
-    flex-direction: column;
-  }
-}
-
-.resultContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  @media (max-width: 912px) {
-    align-items: self-start;
   }
 }
 
