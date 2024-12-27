@@ -58,7 +58,7 @@ export async function fetchAnimeItem(itemId: string) {
 }
 
 export async function createItems() {
-  const maxInt = 12;
+  const maxInt = 3000;
   const { x, y } = getRandomIds(maxInt);
   let item1 = await getItem(x);
   let item2 = await getItem(y);
