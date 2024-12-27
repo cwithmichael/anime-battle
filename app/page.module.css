@@ -22,7 +22,28 @@
   margin-top: 2rem;
 }
 
+.navBar {
+  display: flex;
+  justify-content: flex-end;
+}
+.signOutButton {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 5px;
+  border-color: #b84000;
+  background-color: #b84000;
+  margin-right: 10px;
+  margin-top: 2px;
+}
+.signOutForm {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
 .loginButton:hover {
+  color: black;
+}
+.signOutButton:hover {
   color: black;
 }
 .homePageGreeting {

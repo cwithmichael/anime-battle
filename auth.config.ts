@@ -8,10 +8,7 @@ export const authConfig = {
     async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnBattle = nextUrl.pathname.startsWith("/battle");
-      console.log({ pathName: nextUrl.pathname });
-      const isOnLanding =
-        nextUrl.pathname !== "/battle" && nextUrl.pathname !== "/login";
-      if (isOnBattle || isOnLanding) {
+      if (isOnBattle) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page
       } else if (isLoggedIn) {
