@@ -22,21 +22,19 @@ export default function VoteCard(props: {
             width={100}
           />
         )}
-        <div className={styles.voteCardDetails}>
-          <p className={styles.itemTitle}>
-            {item?.firstName} {item?.lastName}{" "}
-          </p>
-          <p className={styles.itemOrigin}>{item?.origin}</p>
-          <button
-            className={styles.voteButton}
-            onClick={(e) => {
-              e.preventDefault();
-              setSelected(item);
-            }}
-          >
-            Vote
-          </button>
-        </div>
+        <p className={styles.itemTitle}>
+          {item?.firstName} {item?.lastName}{" "}
+        </p>
+        <p className={styles.itemOrigin}>{item?.origin}</p>
+        <button
+          className={styles.voteButton}
+          onClick={(e) => {
+            e.preventDefault();
+            setSelected(item);
+          }}
+        >
+          Vote
+        </button>
       </div>
     );
   } else {

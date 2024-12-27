@@ -24,16 +24,16 @@ export default function resultCard(props: {
           className
         )}
       >
-        {item.image && (
-          <Image
-            className={styles.itemImage}
-            alt={""}
-            src={item.image}
-            height={250}
-            width={250}
-          />
-        )}
         <div className={styles.resultCardDetails}>
+          {item.image && (
+            <Image
+              className={styles.itemImage}
+              alt={""}
+              src={item.image}
+              height={250}
+              width={250}
+            />
+          )}
           <p className={styles.battleStatus}>{battleStatus}</p>
 
           <p className={styles.itemTitle}>
