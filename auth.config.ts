@@ -8,7 +8,8 @@ export const authConfig = {
     async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnBattle = nextUrl.pathname.startsWith("/battle");
-      if (isOnBattle) {
+      const isOnLanding = nextUrl.pathname === "/";
+      if (isOnBattle || isOnLanding) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page
       } else if (isLoggedIn) {
