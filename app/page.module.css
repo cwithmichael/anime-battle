@@ -70,25 +70,6 @@
   text-align: center;
   padding: 0;
 }
-.itemTitle {
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  font-size: 1.25rem;
-  margin-top: 10px;
-}
-
-.itemOrigin {
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  font-weight: 900;
-  font-size: 1.25rem;
-}
-
-.battleStatus {
-  font-weight: 900;
-}
-
-.itemImage {
-  margin: 0 auto;
-}
 
 .resultVotes {
   text-align: center;
@@ -104,7 +85,6 @@
     width: 60px;
     height: 60px;
     align-self: center;
-    margin-top: 11rem;
   }
 }
 

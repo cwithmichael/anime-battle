@@ -7,23 +7,46 @@
   }
 }
 
+.itemTitle {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 1.25rem;
+  margin-top: 10px;
+}
+
+.itemOrigin {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 1.25rem;
+}
+
+.itemImage {
+  margin: 0 auto;
+}
+
 .voteCard {
   align-items: center;
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+  flex-wrap: nowrap;
+  justify-content: space-between;
   text-align: center;
   animation: 1s ease-out 0s 1 slideInFromLeft;
   transition: width 2s, height 2s, background-color 2s, rotate 2s;
   padding: 1rem;
   max-width: 300px;
+  width: 200px;
 
-  @media (max-width: 912px) {
-    max-height: 200px;
-    max-width: 200px;
+  @media (max-width: 1024px) {
+    width: 100%;
     flex-direction: row;
   }
+}
+
+.voteCardDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin: 1.25rem;
 }
 
 .voteButton {
