@@ -24,7 +24,7 @@ Disable auth to avoid having to deal with OAuth
 
 ## TODO
 
-- [] Improve UX
-- [] Add tests
-- [] Add more OAuth options
-- [] Engage with analytics for adding more stats than just number of votes?
+- [ ] Improve UX
+- [ ] Add tests
+- [ ] Add more OAuth options
+- [ ] Engage with analytics for adding more stats than just number of votes?
