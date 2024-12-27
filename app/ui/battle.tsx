@@ -44,7 +44,6 @@ export default function Battle() {
     let ignore = false;
     fetchItems().then((items) => {
       if (!ignore) {
-        console.log("setting items");
         setItems(items);
         setTransition(false);
       }
@@ -57,15 +56,12 @@ export default function Battle() {
 
   useEffect(() => {
     checkIfVoted(items).then((didVote) => {
-      console.log("check", didVote);
       setVoted(didVote);
     });
   }, [checkIfVoted, items, transition]);
 
   function resultTransition() {
     fetchItems().then((items) => {
-      console.log("setting items");
-      console.log({ items });
       if (items) {
         setItems(items);
       }
@@ -89,7 +85,6 @@ export default function Battle() {
   if (!items) {
     return <div style={{ textAlign: "center" }}>Loading...</div>;
   }
-  console.log({ voted, items, transition }, "top level");
   if (transition || voted) {
     return (
       items?.item1 &&
