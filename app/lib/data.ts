@@ -101,7 +101,6 @@ export async function vote(
   itemId2: string,
   selected: string
 ) {
-  console.log({ userId });
   await createBattle(itemId, itemId2);
   await placeVote(userId, itemId, itemId2, selected);
 }
@@ -182,7 +181,6 @@ export async function checkUserBattle(
     console.log(e);
     return false;
   }
-  return false;
 }
 
 export async function createUserBattle(
@@ -218,13 +216,10 @@ export async function createUserBattle(
     });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      console.log("user battle exists");
       return true;
     }
-    console.log("different error");
     throw e;
   }
-  console.log("false");
   return false;
 }
 
