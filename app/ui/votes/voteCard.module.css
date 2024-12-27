@@ -25,6 +25,8 @@
 
 .voteCard {
   align-items: center;
+  border-style: groove;
+  border-radius: 5px;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -35,6 +37,10 @@
   padding: 1rem;
   max-width: 300px;
   height: 300px;
+  width: 300px;
+  @media (max-width: 600px) {
+    justify-content: unset;
+  }
 }
 
 .voteCardDetails {
@@ -64,6 +70,9 @@
   .voteCard:hover {
     background-color: #d18d18;
   }
+  .voteCard {
+    border-color: #b84000;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -78,5 +87,8 @@
     border: 1px solid rgb(221, 243, 170);
     border-radius: 5px;
     color: black;
+  }
+  .voteCard {
+    border-color: white;
   }
 }
