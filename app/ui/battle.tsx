@@ -1,103 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { AnimeItem, BattleItem } from "@/app/lib/definitions";
+import { BattleItem } from "@/app/lib/definitions";
 import VoteForm from "./votes/voteForm";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ResultForm from "./results/resultForm";
-import { checkUserBattle, createUser, getItem, saveItem } from "../lib/data";
-import { getRandomIds } from "../lib/utils/general";
-import { convertAnimeItemToBattleItem } from "../lib/utils/parser";
+import { checkUserBattle, createItems, createUser } from "../lib/data";
 import { useSession } from "next-auth/react";
 
-async function fetchAnimeItem(itemId: string) {
-  const query = `query CharacterQuery($characterId: Int) {
-    Character(id: $characterId) {
-      id
-      name {
-        first
-        last
-      }
-      image {
-        medium
-      }
-      media {
-        nodes {
-          title {
-            english
-          }
-        }
-      }
-    }
-  }
-  `;
-  try {
-    const data = await fetch("https://graphql.anilist.co/", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query,
-        variables: {
-          characterId: itemId,
-        },
-      }),
-    });
-    if (data.status === 200) {
-      const result = await data.json();
-      return Response.json(result.data satisfies AnimeItem);
-    }
-    if (data.status === 404) {
-      return Response.json(null, { status: 404 });
-    }
-  } catch (e) {
-    console.error(e);
-  }
-
-  return Response.json(null, { status: 404 });
-}
-
-async function createItems() {
-  const maxInt = 3000;
-  const { x, y } = getRandomIds(maxInt);
-  let item1 = await getItem(x);
-  let item2 = await getItem(y);
-  if (item1 && item2 && item1.itemId !== item2.itemId) {
-    return { item1, item2 };
-  }
-  let retryCount = 5;
-  while (retryCount > 0 && (item1 === undefined || item2 === undefined)) {
-    const { x, y } = getRandomIds(maxInt);
-    if (!item1) {
-      item1 = await getItem(x);
-      if (!item1) {
-        const data = await fetchAnimeItem(x);
-        const fetchedItem: AnimeItem = await data.json();
-        if (fetchedItem) item1 = convertAnimeItemToBattleItem(fetchedItem);
-      }
-    }
-    if (!item2) {
-      item2 = await getItem(y);
-      if (!item2) {
-        const data = await fetchAnimeItem(y);
-        const fetchedItem: AnimeItem = await data.json();
-        if (fetchedItem) item2 = convertAnimeItemToBattleItem(fetchedItem);
-      }
-    }
-    if (item1 && item2 && item1.itemId !== item2.itemId) {
-      await saveItem(item1);
-      await saveItem(item2);
-      return { item1, item2 };
-    }
-    retryCount -= 1;
-  }
-
-  return undefined;
-}
-
 export default function Battle() {
-  const [startNewBattle, setStartNewBattle] = useState(true);
+  const [startNewBattle, setStartNewBattle] = useState(false);
+  const [voted, setVoted] = useState(false);
   const [transition, setTransition] = useState(false);
   const [items, setItems] = useState<
     | {
@@ -107,9 +20,61 @@ export default function Battle() {
     | undefined
   >(undefined);
   const { data: session, status, update } = useSession();
-  const [votedAlready, setVotedAlready] = useState(false);
   async function fetchItems() {
     return createItems();
+  }
+
+  const checkIfVoted = useCallback(
+    async (items?: { item1: BattleItem; item2: BattleItem }) => {
+      if (session && status === "authenticated" && session.user?.email) {
+        if (items?.item1?.itemId && items?.item2?.itemId) {
+          return checkUserBattle(
+            session.user?.email,
+            items?.item1?.itemId?.toString(),
+            items?.item2?.itemId?.toString()
+          );
+        }
+      }
+      return false;
+    },
+    [session, status]
+  );
+
+  useEffect(() => {
+    let ignore = false;
+    fetchItems().then((items) => {
+      if (!ignore) {
+        console.log("setting items");
+        setItems(items);
+        setTransition(false);
+      }
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    checkIfVoted(items).then((didVote) => {
+      console.log("check", didVote);
+      setVoted(didVote);
+    });
+  }, [checkIfVoted, items, transition]);
+
+  function resultTransition() {
+    fetchItems().then((items) => {
+      console.log("setting items");
+      console.log({ items });
+      if (items) {
+        setItems(items);
+      }
+      checkIfVoted(items).then((didVote) => {
+        if (!didVote) {
+          setTransition(false);
+        }
+      });
+    });
   }
 
   useEffect(() => {
@@ -121,47 +86,19 @@ export default function Battle() {
     }
   }, [session, status, update]);
 
-  useEffect(() => {
-    if (startNewBattle) {
-      fetchItems()
-        .then((items) => {
-          if (items) {
-            setItems(items);
-          }
-          async function checkIfVoted() {
-            if (session && status === "authenticated" && session.user?.email) {
-              if (items?.item1?.itemId && items?.item2?.itemId) {
-                const voted = await checkUserBattle(
-                  session.user?.email,
-                  items?.item1?.itemId?.toString(),
-                  items?.item2?.itemId?.toString()
-                );
-                if (voted) {
-                  console.log("voted already");
-                  setStartNewBattle(true);
-                }
-              }
-            }
-          }
-          checkIfVoted();
-          setStartNewBattle(false);
-        })
-        .catch();
-    }
-  }, [session, startNewBattle, status]);
   if (!items) {
     return <div style={{ textAlign: "center" }}>Loading...</div>;
   }
-  if (transition) {
+  console.log({ voted, items, transition }, "top level");
+  if (transition || voted) {
     return (
       items?.item1 &&
       items?.item2 && (
         <ResultForm
           items={items}
+          key={JSON.stringify(items)}
           setStartNewBattle={() => {
-            setStartNewBattle(true);
-            setTransition(false);
-            setItems(undefined);
+            resultTransition();
           }}
         />
       )
@@ -170,18 +107,15 @@ export default function Battle() {
   return (
     <VoteForm
       items={items}
+      key={JSON.stringify(items)}
       setTransition={() => {
         setStartNewBattle(false);
-        setTransition(true);
-      }}
-      setVotedAlready={() => {
-        setVotedAlready(true);
         setTransition(true);
       }}
       session={session}
       userStatus={status}
       userId={session?.user?.email ?? undefined}
-      votingDisabled={votedAlready}
+      votingDisabled={false}
     />
   );
 }

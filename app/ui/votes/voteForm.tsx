@@ -5,7 +5,6 @@ import styles from "@/app/page.module.css";
 import VoteCard from "./voteCard";
 import Image from "next/image";
 import { placeVote } from "@/app/lib/data";
-import { useEffect, useState } from "react";
 import { Session } from "next-auth";
 
 export default function VoteForm(props: {
@@ -14,35 +13,29 @@ export default function VoteForm(props: {
   userStatus: string;
   items?: { item1: BattleItem; item2: BattleItem };
   setTransition: () => void;
-  setVotedAlready: () => void;
   votingDisabled: boolean;
 }) {
-  const [selected, setSelected] = useState<BattleItem>();
-
-  useEffect(() => {
-    async function userVote() {
-      if (
-        props.userId &&
-        selected &&
-        props.items &&
-        props.items?.item1?.itemId &&
-        props.items?.item2.itemId
-      ) {
-        if (props.session && props.userStatus === "authenticated") {
-          if (typeof props.session?.user?.email === "string") {
-            await placeVote(
-              props.session.user?.email,
-              props.items?.item1.itemId.toString(),
-              props.items.item2.itemId.toString(),
-              selected.itemId.toString()
-            );
-          }
+  async function userVote(selected: BattleItem) {
+    if (
+      props.userId &&
+      selected &&
+      props.items &&
+      props.items?.item1?.itemId &&
+      props.items?.item2.itemId
+    ) {
+      if (props.session && props.userStatus === "authenticated") {
+        if (typeof props.session?.user?.email === "string") {
+          await placeVote(
+            props.session.user?.email,
+            props.items?.item1.itemId.toString(),
+            props.items.item2.itemId.toString(),
+            selected.itemId.toString()
+          );
         }
-        props.setTransition();
       }
+      props.setTransition();
     }
-    userVote();
-  }, [props, props.items, selected]);
+  }
   if (props.votingDisabled) {
     return <div>Voted Already</div>;
   }
@@ -52,7 +45,7 @@ export default function VoteForm(props: {
         <VoteCard
           item={props.items?.item1}
           setSelected={(item: BattleItem) => {
-            setSelected(item);
+            userVote(item);
           }}
         />
         <Image
@@ -67,7 +60,7 @@ export default function VoteForm(props: {
         <VoteCard
           item={props.items?.item2}
           setSelected={(item: BattleItem) => {
-            setSelected(item);
+            userVote(item);
           }}
         />
       </div>

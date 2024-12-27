@@ -1,8 +1,99 @@
 "use server";
 import prisma from "./db";
 import { Prisma } from "@prisma/client";
-import { BattleItem } from "@/app/lib/definitions";
-import { convertCharacterItemToBattleItem } from "./utils/parser";
+import { AnimeItem, BattleItem } from "@/app/lib/definitions";
+import {
+  convertAnimeItemToBattleItem,
+  convertCharacterItemToBattleItem,
+} from "./utils/parser";
+import { getRandomIds } from "./utils/general";
+
+export async function fetchAnimeItem(itemId: string) {
+  const query = `query CharacterQuery($characterId: Int) {
+    Character(id: $characterId) {
+      id
+      name {
+        first
+        last
+      }
+      image {
+        medium
+      }
+      media {
+        nodes {
+          title {
+            english
+          }
+        }
+      }
+    }
+  }
+  `;
+  try {
+    const data = await fetch("https://graphql.anilist.co/", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          characterId: itemId,
+        },
+      }),
+    });
+    if (data.status === 200) {
+      const result = await data.json();
+      return Response.json(result.data satisfies AnimeItem);
+    }
+    if (data.status === 404) {
+      return Response.json(null, { status: 404 });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  return Response.json(null, { status: 404 });
+}
+
+export async function createItems() {
+  const maxInt = 12;
+  const { x, y } = getRandomIds(maxInt);
+  let item1 = await getItem(x);
+  let item2 = await getItem(y);
+  if (item1 && item2 && item1.itemId !== item2.itemId) {
+    return { item1, item2 };
+  }
+  let retryCount = 5;
+  while (retryCount > 0 && (item1 === undefined || item2 === undefined)) {
+    const { x, y } = getRandomIds(maxInt);
+    if (!item1) {
+      item1 = await getItem(x);
+      if (!item1) {
+        const data = await fetchAnimeItem(x);
+        const fetchedItem: AnimeItem = await data.json();
+        if (fetchedItem) item1 = convertAnimeItemToBattleItem(fetchedItem);
+      }
+    }
+    if (!item2) {
+      item2 = await getItem(y);
+      if (!item2) {
+        const data = await fetchAnimeItem(y);
+        const fetchedItem: AnimeItem = await data.json();
+        if (fetchedItem) item2 = convertAnimeItemToBattleItem(fetchedItem);
+      }
+    }
+    if (item1 && item2 && item1.itemId !== item2.itemId) {
+      await saveItem(item1);
+      await saveItem(item2);
+      return { item1, item2 };
+    }
+    retryCount -= 1;
+  }
+
+  return undefined;
+}
 
 export async function vote(
   userId: string,
