@@ -4,13 +4,7 @@ import { AnimeItem, BattleItem } from "@/app/lib/definitions";
 import VoteForm from "./votes/voteForm";
 import { useEffect, useState } from "react";
 import ResultForm from "./results/resultForm";
-import {
-  createBattle,
-  createUser,
-  createUserBattle,
-  getItem,
-  saveItem,
-} from "../lib/data";
+import { checkUserBattle, createUser, getItem, saveItem } from "../lib/data";
 import { getRandomIds } from "../lib/utils/general";
 import { convertAnimeItemToBattleItem } from "../lib/utils/parser";
 import { useSession } from "next-auth/react";
@@ -65,47 +59,41 @@ async function fetchAnimeItem(itemId: string) {
 }
 
 async function createItems() {
-  const maxInt = 1000;
+  const maxInt = 3000;
   const { x, y } = getRandomIds(maxInt);
   let item1 = await getItem(x);
-  if (item1 === null) {
-    const data = await fetchAnimeItem(x);
-    const fetchedItem: AnimeItem = await data.json();
-    if (fetchedItem) item1 = convertAnimeItemToBattleItem(fetchedItem);
-  }
   let item2 = await getItem(y);
-  if (item2 === null) {
-    const data = await fetchAnimeItem(y);
-    const fetchedItem: AnimeItem = await data.json();
-    if (fetchedItem) item2 = convertAnimeItemToBattleItem(fetchedItem);
+  if (item1 && item2 && item1.itemId !== item2.itemId) {
+    return { item1, item2 };
   }
   let retryCount = 5;
-  while (retryCount > 0) {
+  while (retryCount > 0 && (item1 === undefined || item2 === undefined)) {
     const { x, y } = getRandomIds(maxInt);
-    item1 = await getItem(x);
     if (!item1) {
-      const data = await fetchAnimeItem(x);
-      const fetchedItem: AnimeItem = await data.json();
-      if (fetchedItem) item1 = convertAnimeItemToBattleItem(fetchedItem);
+      item1 = await getItem(x);
+      if (!item1) {
+        const data = await fetchAnimeItem(x);
+        const fetchedItem: AnimeItem = await data.json();
+        if (fetchedItem) item1 = convertAnimeItemToBattleItem(fetchedItem);
+      }
     }
-    item2 = await getItem(y);
     if (!item2) {
-      const data = await fetchAnimeItem(y);
-      const fetchedItem: AnimeItem = await data.json();
-      if (fetchedItem) item2 = convertAnimeItemToBattleItem(fetchedItem);
+      item2 = await getItem(y);
+      if (!item2) {
+        const data = await fetchAnimeItem(y);
+        const fetchedItem: AnimeItem = await data.json();
+        if (fetchedItem) item2 = convertAnimeItemToBattleItem(fetchedItem);
+      }
     }
     if (item1 && item2 && item1.itemId !== item2.itemId) {
-      break;
+      await saveItem(item1);
+      await saveItem(item2);
+      return { item1, item2 };
     }
     retryCount -= 1;
   }
-  if (item1 && item2 && item1.itemId !== item2.itemId) {
-    await saveItem(item1);
-    await saveItem(item2);
-    return { item1, item2 };
-  } else {
-    return undefined;
-  }
+
+  return undefined;
 }
 
 export default function Battle() {
@@ -119,6 +107,10 @@ export default function Battle() {
     | undefined
   >(undefined);
   const { data: session, status, update } = useSession();
+  const [votedAlready, setVotedAlready] = useState(false);
+  async function fetchItems() {
+    return createItems();
+  }
 
   useEffect(() => {
     async function createUserInDB(email: string) {
@@ -130,30 +122,31 @@ export default function Battle() {
   }, [session, status, update]);
 
   useEffect(() => {
-    async function fetchItems() {
-      const items = await createItems();
-      if (items) {
-        setItems(items);
-        let votedAlready = false;
-        if (session && status === "authenticated" && session.user?.email) {
-          votedAlready = await createUserBattle(
-            session.user?.email,
-            items?.item1.itemId.toString(),
-            items.item2.itemId.toString()
-          );
-        }
-        if (!votedAlready) {
-          await createBattle(
-            items?.item1.itemId.toString(),
-            items.item2.itemId.toString()
-          );
-        } else {
-          setStartNewBattle(true);
-        }
-      }
-    }
     if (startNewBattle) {
-      fetchItems().catch();
+      fetchItems()
+        .then((items) => {
+          if (items) {
+            setItems(items);
+          }
+          async function checkIfVoted() {
+            if (session && status === "authenticated" && session.user?.email) {
+              if (items?.item1?.itemId && items?.item2?.itemId) {
+                const voted = await checkUserBattle(
+                  session.user?.email,
+                  items?.item1?.itemId?.toString(),
+                  items?.item2?.itemId?.toString()
+                );
+                if (voted) {
+                  console.log("voted already");
+                  setStartNewBattle(true);
+                }
+              }
+            }
+          }
+          checkIfVoted();
+          setStartNewBattle(false);
+        })
+        .catch();
     }
   }, [session, startNewBattle, status]);
   if (!items) {
@@ -181,6 +174,14 @@ export default function Battle() {
         setStartNewBattle(false);
         setTransition(true);
       }}
+      setVotedAlready={() => {
+        setVotedAlready(true);
+        setTransition(true);
+      }}
+      session={session}
+      userStatus={status}
+      userId={session?.user?.email ?? undefined}
+      votingDisabled={votedAlready}
     />
   );
 }

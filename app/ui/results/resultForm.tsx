@@ -16,14 +16,15 @@ export default function ResultForm(props: {
   setStartNewBattle: () => void;
 }) {
   const [voteData, setVoteData] = useState<battle | null>();
-
   useEffect(() => {
     async function fetchVoteData() {
-      const voteData = await getVoteCount(
+      const voteCount = await getVoteCount(
         props.items?.item1?.itemId?.toString(),
         props.items?.item2.itemId?.toString()
       );
-      setVoteData(voteData);
+      if (voteCount) {
+        setVoteData(voteCount);
+      }
     }
     if (props.items?.item1 && props.items?.item2) {
       fetchVoteData();

@@ -4,9 +4,15 @@ import { Prisma } from "@prisma/client";
 import { BattleItem } from "@/app/lib/definitions";
 import { convertCharacterItemToBattleItem } from "./utils/parser";
 
-export async function vote(itemId: string, itemId2: string, selected: string) {
+export async function vote(
+  userId: string,
+  itemId: string,
+  itemId2: string,
+  selected: string
+) {
+  console.log({ userId });
   await createBattle(itemId, itemId2);
-  await placeVote(itemId, itemId2, selected);
+  await placeVote(userId, itemId, itemId2, selected);
 }
 
 export async function saveItem(item: BattleItem) {
@@ -64,26 +70,71 @@ export async function createBattle(itemOneId: string, itemTwoId: string) {
   }
 }
 
+export async function checkUserBattle(
+  userEmail: string,
+  itemOneId: string,
+  itemTwoId: string
+) {
+  try {
+    if (!userEmail) {
+      return false;
+    }
+    const userBattle = await prisma.user_battle.findFirst({
+      where: {
+        item_one_id: itemOneId,
+        item_two_id: itemTwoId,
+        user_email: userEmail,
+      },
+    });
+    return userBattle ? true : false;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+  return false;
+}
+
 export async function createUserBattle(
   userEmail: string,
   itemOneId: string,
   itemTwoId: string
 ) {
   try {
+    if (!userEmail) {
+      return false;
+    }
     await prisma.user_battle.create({
       data: {
         item_one_id: itemOneId,
         item_two_id: itemTwoId,
-        user_email: userEmail,
+        user: {
+          connect: {
+            email: userEmail,
+          },
+        },
+      },
+    });
+    await prisma.user_battle.create({
+      data: {
+        item_one_id: itemTwoId,
+        item_two_id: itemOneId,
+        user: {
+          connect: {
+            email: userEmail,
+          },
+        },
       },
     });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      return false;
+      console.log("user battle exists");
+      return true;
     }
-    console.error({ e });
+    console.log("different error");
+    throw e;
   }
-  return true;
+  console.log("false");
+  return false;
 }
 
 export async function createItem(item: BattleItem) {
@@ -112,8 +163,16 @@ export async function createItem(item: BattleItem) {
 export async function getVotes(itemOneId: string, itemTwoId: string) {
   const result = await prisma.battle.findFirst({
     where: {
-      item_one_id: itemOneId,
-      item_two_id: itemTwoId,
+      OR: [
+        {
+          item_one_id: itemOneId,
+          item_two_id: itemTwoId,
+        },
+        {
+          item_one_id: itemTwoId,
+          item_two_id: itemOneId,
+        },
+      ],
     },
   });
   return result;
@@ -128,11 +187,13 @@ export async function getCharacterItem(itemId: string) {
   return result;
 }
 export async function placeVote(
+  userId: string,
   itemOneId: string,
   itemTwoId: string,
   selectedId: string
 ) {
   try {
+    await createBattle(itemOneId, itemTwoId);
     if (selectedId === itemOneId) {
       await prisma.battle.update({
         where: {
@@ -162,6 +223,7 @@ export async function placeVote(
         },
       });
     }
+    await createUserBattle(userId, itemOneId, itemTwoId);
   } catch (e) {
     throw e;
   }
