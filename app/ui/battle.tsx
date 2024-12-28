@@ -7,7 +7,7 @@ import ResultForm from "./results/resultForm";
 import { checkUserBattle, createItems, createUser } from "../lib/data";
 import { useSession } from "next-auth/react";
 
-export default function Battle() {
+export default function Battle(props: { isGuest: boolean }) {
   const [voted, setVoted] = useState(false);
   const [transition, setTransition] = useState(false);
   const [items, setItems] = useState<
@@ -53,32 +53,40 @@ export default function Battle() {
   }, []);
 
   useEffect(() => {
-    checkIfVoted(items).then((didVote) => {
-      setVoted(didVote);
-    });
-  }, [checkIfVoted, items, transition]);
+    if (!props.isGuest) {
+      checkIfVoted(items).then((didVote) => {
+        setVoted(didVote);
+      });
+    }
+  }, [props.isGuest, checkIfVoted, items, transition]);
 
   function resultTransition() {
     fetchItems().then((items) => {
       if (items) {
         setItems(items);
       }
-      checkIfVoted(items).then((didVote) => {
-        if (!didVote) {
-          setTransition(false);
-        }
-      });
+      if (!props.isGuest) {
+        checkIfVoted(items).then((didVote) => {
+          if (!didVote) {
+            setTransition(false);
+          }
+        });
+      } else {
+        setTransition(false);
+      }
     });
   }
 
   useEffect(() => {
-    async function createUserInDB(email: string) {
-      await createUser(email);
+    if (!props.isGuest) {
+      async function createUserInDB(email: string) {
+        await createUser(email);
+      }
+      if (session && status === "authenticated" && session.user?.email) {
+        createUserInDB(session.user?.email);
+      }
     }
-    if (session && status === "authenticated" && session.user?.email) {
-      createUserInDB(session.user?.email);
-    }
-  }, [session, status, update]);
+  }, [props.isGuest, session, status, update]);
 
   if (!items) {
     return <div style={{ textAlign: "center" }}>Loading...</div>;
@@ -107,7 +115,7 @@ export default function Battle() {
       session={session}
       userStatus={status}
       userId={session?.user?.email ?? undefined}
-      votingDisabled={false}
+      isGuest={props.isGuest}
     />
   );
 }

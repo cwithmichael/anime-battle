@@ -6,6 +6,9 @@ export const authConfig = {
   },
   callbacks: {
     async authorized({ auth, request: { nextUrl } }) {
+      if (nextUrl.pathname === "/battle/guest") {
+        return true;
+      }
       const isLoggedIn = !!auth?.user;
       if (!isLoggedIn && nextUrl.pathname === "/") {
         return false;

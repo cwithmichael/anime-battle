@@ -95,16 +95,6 @@ export async function createItems() {
   return undefined;
 }
 
-export async function vote(
-  userId: string,
-  itemId: string,
-  itemId2: string,
-  selected: string
-) {
-  await createBattle(itemId, itemId2);
-  await placeVote(userId, itemId, itemId2, selected);
-}
-
 export async function saveItem(item: BattleItem) {
   await createItem(item);
 }
@@ -273,10 +263,11 @@ export async function getCharacterItem(itemId: string) {
   return result;
 }
 export async function placeVote(
-  userId: string,
+  isGuest: boolean,
   itemOneId: string,
   itemTwoId: string,
-  selectedId: string
+  selectedId: string,
+  userId?: string
 ) {
   try {
     await createBattle(itemOneId, itemTwoId);
@@ -309,7 +300,9 @@ export async function placeVote(
         },
       });
     }
-    await createUserBattle(userId, itemOneId, itemTwoId);
+    if (userId && !isGuest) {
+      await createUserBattle(userId, itemOneId, itemTwoId);
+    }
   } catch (e) {
     throw e;
   }

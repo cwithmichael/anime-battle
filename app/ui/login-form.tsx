@@ -1,6 +1,7 @@
 import { signIn } from "../../auth";
 import styles from "@/app/page.module.css";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 export function Login({ provider }: { provider?: string }) {
   return (
@@ -25,6 +26,15 @@ export function Login({ provider }: { provider?: string }) {
         }}
       >
         <button className={styles.loginButton}>Sign In</button>
+      </form>
+      <form
+        action={async () => {
+          "use server";
+          console.log("bypass auth");
+          redirect("/battle/guest");
+        }}
+      >
+        <button className={styles.loginButton}>Play as Guest</button>
       </form>
     </div>
   );

@@ -13,11 +13,10 @@ export default function VoteForm(props: {
   userStatus: string;
   items?: { item1: BattleItem; item2: BattleItem };
   setTransition: () => void;
-  votingDisabled: boolean;
+  isGuest: boolean;
 }) {
   async function userVote(selected: BattleItem) {
     if (
-      props.userId &&
       selected &&
       props.items &&
       props.items?.item1?.itemId &&
@@ -26,18 +25,24 @@ export default function VoteForm(props: {
       if (props.session && props.userStatus === "authenticated") {
         if (typeof props.session?.user?.email === "string") {
           await placeVote(
-            props.session.user?.email,
+            false,
             props.items?.item1.itemId.toString(),
             props.items.item2.itemId.toString(),
-            selected.itemId.toString()
+            selected.itemId.toString(),
+            props.session.user?.email
           );
         }
       }
+      if (props.isGuest) {
+        await placeVote(
+          true,
+          props.items?.item1.itemId.toString(),
+          props.items.item2.itemId.toString(),
+          selected.itemId.toString()
+        );
+      }
       props.setTransition();
     }
-  }
-  if (props.votingDisabled) {
-    return <div>Voted Already</div>;
   }
   return (
     <form>
