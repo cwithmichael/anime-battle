@@ -18,8 +18,8 @@ export default function VoteCard(props: {
             className={styles.itemImage}
             alt={""}
             src={item.image}
-            height={100}
-            width={100}
+            height={120}
+            width={120}
           />
         )}
         <p className={styles.itemTitle}>

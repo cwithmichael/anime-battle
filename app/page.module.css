@@ -1,12 +1,12 @@
 .title {
-  font-family: "Courier New", Courier, monospace;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
   font-size: 52px;
-  font-style: italic;
   color: #b84000;
   text-align: center;
   @media (max-width: 912px) {
     font-size: 42px;
   }
+  margin-bottom: 10px;
 }
 
 .login {

@@ -41,7 +41,7 @@ export default async function RootLayout({
             </form>
           )}
         </nav>
-        <h1 className={styles.title}>Anime Battle</h1>
+        <h1 className={styles.title}>Anime Battle!</h1>
         {children}
       </body>
     </html>
