@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/ui/global.css";
 import styles from "@/app/page.module.css";
 import { auth, signOut } from "@/auth";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default async function RootLayout({
         </nav>
         <h1 className={styles.title}>Anime Battle!</h1>
         {children}
+        <Analytics />
       </body>
     </html>
   );
